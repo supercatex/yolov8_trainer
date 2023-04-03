@@ -4,6 +4,7 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 import cv2
 from pcms.openvino_models import *
+import yaml
 
 
 def callback_image(msg):
@@ -20,7 +21,11 @@ if __name__ == "__main__":
     rospy.Subscriber(topic_image, Image, callback_image)
     rospy.wait_for_message(topic_image, Image)
     
-    net = Yolov8("best", "/home/pcms/runs/detect/custom/weights/best_openvino_model")
+    with open("config.yaml", "r") as f:
+        cfg = yaml.safe_load(f)
+    dir_data = os.path.join(cfg["dir"]["root"], cfg["dir"]["data"])
+
+    net = Yolov8("best", "./runs/detect/custom/weights/best_openvino_model")
     net.classes = ['a']
     while not rospy.is_shutdown():
         rospy.Rate(20).sleep()
@@ -29,8 +34,9 @@ if __name__ == "__main__":
         image = _image.copy()
         
         res = net.forward(image)[0]["det"]
+        print(res)
         for x1, y1, x2, y2, score, label_id in res:
-            if score < 0.9: continue
+            # if score < 0.1: continue
             x1, y1, x2, y2 = map(int, [x1, y1, x2, y2])
             cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
         cv2.imshow("frame", frame)
