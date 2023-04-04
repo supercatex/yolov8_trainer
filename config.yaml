@@ -3,4 +3,4 @@ dir:
   data: "my_dataset"
 
 classes: ["a"]
-mode: "valid"
+mode: "train"
