@@ -15,7 +15,6 @@ uri_yaml = os.path.join(dir_data, cfg["dir"]["data"] + ".yaml")
 shutil.rmtree("./runs", ignore_errors=True, onerror=None)
 
 model = YOLO('yolov8n.pt')
-# model.to("cuda")
 results = model.train(
 	data = uri_yaml,
 	imgsz = 640,
@@ -24,7 +23,3 @@ results = model.train(
 	name = 'custom',
     plots=True
 )
-
-path = "./runs/detect/custom/weights/best.pt"
-det_model = YOLO(path)
-det_model.export(format="openvino", dynamic=True, half=False)

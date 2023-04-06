@@ -53,6 +53,7 @@ if __name__ == "__main__":
         input_hw = input_tensor.shape[2:]
         detections = postprocess(pred_boxes=boxes, input_hw=input_hw, orig_img=image, pred_masks=masks, n_classes=len(cfg["classes"]))
         # {"det": [[x1, y1, x2, y2, score, label_id], ...]}
+        print(detections)
         image = draw_results(detections[0], image, cfg["classes"])
         cv2.imshow("frame", image)
         key_code = cv2.waitKey(1)

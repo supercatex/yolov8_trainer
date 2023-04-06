@@ -2,5 +2,5 @@ dir:
   root: "/home/pcms"
   data: "my_dataset"
 
-classes: ["a"]
+classes: ['bag1', 'bag2', 'chair']
 mode: "train"
