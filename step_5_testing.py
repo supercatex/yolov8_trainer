@@ -42,6 +42,7 @@ if __name__ == "__main__":
         rospy.Rate(20).sleep()
 
         image = _image.copy()
+        image = cv2.resize(image, (640, 640))
         num_outputs = len(model.outputs)
         preprocessed_image = preprocess_image(image)
         input_tensor = image_to_tensor(preprocessed_image)
@@ -51,7 +52,15 @@ if __name__ == "__main__":
         if num_outputs > 1:
             masks = result[model.output(1)]
         input_hw = input_tensor.shape[2:]
-        detections = postprocess(pred_boxes=boxes, input_hw=input_hw, orig_img=image, pred_masks=masks, n_classes=len(cfg["classes"]))
+        detections = postprocess(
+            pred_boxes=boxes, 
+            input_hw=input_hw, 
+            orig_img=image, 
+            pred_masks=masks, 
+            n_classes=len(cfg["classes"]),
+            min_conf_threshold=0.1,
+            nms_iou_threshold=0.0
+        )
         # {"det": [[x1, y1, x2, y2, score, label_id], ...]}
         print(detections)
         image = draw_results(detections[0], image, cfg["classes"])

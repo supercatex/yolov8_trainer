@@ -12,9 +12,10 @@ def save():
     global frame, fname
     fh, fw, fc = frame.shape
     with open(os.path.join(dir_labels, fname + ".txt"), "w") as f:
-        x, y = (_x1 + _x2) // 2 / fw, (_y1 + _y2) // 2 / fh
-        w, h = (_x2 - _x1) / fw, (_y2 - _y1) / fh
-        f.write("%d %f %f %f %f\n" % (_class_id, x, y, w, h))
+        if _x1 >= 0 and _y1 >= 0 and _x2 >= 0 and _y2 >= 0:
+            x, y = (_x1 + _x2) // 2 / fw, (_y1 + _y2) // 2 / fh
+            w, h = (_x2 - _x1) / fw, (_y2 - _y1) / fh
+            f.write("%d %f %f %f %f\n" % (_class_id, x, y, w, h))
     rospy.loginfo("add %s!" % fname)
 
 
@@ -63,7 +64,8 @@ if __name__ == "__main__":
     n_total = len(os.listdir(dir_images))
     for i, fname in enumerate(os.listdir(dir_images)):
         print("%03d/%03d: %s" % (i + 1, n_total, fname))
-        fname = fname.split(".")[0]
+        fname = ".".join(fname.split(".")[:-1])
+        print(fname)
         fimage = os.path.join(dir_images, fname + ".jpg")
         flabel = os.path.join(dir_labels, fname + ".txt")
         if os.path.exists(flabel): continue
